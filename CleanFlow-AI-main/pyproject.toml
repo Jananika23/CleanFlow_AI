@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "dataclean-env"
+version = "1.0.0"
+description = "A real-world data cleaning RL environment built on the OpenEnv framework"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.111.0",
+    "uvicorn[standard]==0.30.1",
+    "pydantic==2.7.1",
+    "pandas==2.2.2",
+    "numpy==1.26.4",
+    "openai==1.30.1",
+    "requests==2.32.3",
+    "python-multipart==0.0.9",
+    "openenv-core>=0.2.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]

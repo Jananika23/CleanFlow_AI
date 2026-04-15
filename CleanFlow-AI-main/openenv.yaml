@@ -1,0 +1,81 @@
+name: dataclean_env
+version: "1.0.0"
+description: >
+  A real-world data cleaning RL environment where an AI agent must clean
+  messy tabular datasets. Includes 6 tasks of increasing difficulty:
+  missing value imputation, duplicate removal, type/format standardization,
+  outlier treatment, referential integrity, and full pipeline repair.
+
+tags:
+  - openenv
+  - data-cleaning
+  - real-world
+  - tabular
+  - rl
+
+author: DataClean Team
+license: MIT
+
+tasks:
+  - id: missing_values
+    difficulty: easy
+    description: Impute missing values in numeric and categorical columns
+    max_steps: 15
+
+  - id: duplicate_removal
+    difficulty: easy_medium
+    description: Detect and remove exact and near-duplicate rows
+    max_steps: 15
+
+  - id: type_format_fix
+    difficulty: medium
+    description: Standardize data types and formats across columns
+    max_steps: 20
+
+  - id: outlier_treatment
+    difficulty: medium_hard
+    description: Detect and cap outliers using IQR method
+    max_steps: 20
+
+  - id: referential_integrity
+    difficulty: hard
+    description: Fix cross-table foreign key violations and inconsistent values
+    max_steps: 25
+
+  - id: full_pipeline_repair
+    difficulty: hard
+    description: Repair a dataset with all types of data quality issues combined
+    max_steps: 35
+
+endpoints:
+  reset: POST /reset
+  step:  POST /step
+  state: GET  /state
+  health: GET /health
+
+action_space:
+  type: DataCleanAction
+  fields:
+    - action_type: str  # fill_missing | drop_duplicates | cast_type | standardize_format | cap_outliers | drop_outliers | rename_value | fix_cross_column | submit
+    - column: Optional[str]
+    - params: Optional[dict]
+
+observation_space:
+  type: DataCleanObservation
+  fields:
+    - task_id: str
+    - task_description: str
+    - columns: List[ColumnInfo]
+    - data_sample: List[dict]
+    - issues_remaining: List[str]
+    - step_count: int
+    - last_action_result: str
+
+reward:
+  range: [-1.0, 1.0]
+  type: dense
+  description: >
+    Incremental reward based on improvement in data quality score.
+    Completion bonus of +0.5 for achieving perfect score.
+    Small step penalty of -0.01 per step to discourage loops.
+    Penalty of -0.1 for exhausting max steps without completion.
